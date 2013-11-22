@@ -31,11 +31,11 @@ namespace tweetMaps_WPF
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-         LocationConverter locConverter = new LocationConverter();
-         TwitterService twitterService;
-         OAuthRequestToken requestToken;
+        LocationConverter locConverter = new LocationConverter();
+        TwitterService twitterService;
+        OAuthRequestToken requestToken;
 
-         Pushpin GpsPushpin;
+        Pushpin GpsPushpin;
 
         public MainWindow()
         {
@@ -57,7 +57,7 @@ namespace tweetMaps_WPF
 
             Loaded += OnLoaded;
 
-            
+
         }
 
         private void viewMap_ViewChangeOnFrame(object sender, MapEventArgs e)
@@ -86,12 +86,12 @@ namespace tweetMaps_WPF
             if (((Button)sender).Name == "btnCurrentLocation")
             {
                 GetMyLocation();
-                return; 
+                return;
             }
             else if (((Button)sender).Name == "btnSearchForLocation")
             {
                 SearchForLocation();
-                return; 
+                return;
             }
 
             Location center = (Location)locConverter.ConvertFrom(tagInfo[0]);
@@ -115,7 +115,7 @@ namespace tweetMaps_WPF
             Location center = new Location(latitude, longitude);
             double zoom = 10;
 
-            myMap.SetView(center, zoom); 
+            myMap.SetView(center, zoom);
         }
 
         private void GetMyLocation()
@@ -151,16 +151,16 @@ namespace tweetMaps_WPF
                                     //grab the first response
                                     var marker = nodes[0] as XmlElement;
 
-                                    double err = 0; 
+                                    double err = 0;
 
                                     var latitude = Convert.ToDouble(marker.GetAttribute("lat"));
 
-                                    var longitude = Convert.ToDouble(marker.GetAttribute("lng")); 
+                                    var longitude = Convert.ToDouble(marker.GetAttribute("lng"));
 
                                     Location center = new Location(latitude, longitude);
                                     double zoom = 10;
 
-                                    myMap.SetView(center, zoom); 
+                                    myMap.SetView(center, zoom);
 
                                     //var _geoLoc = new GeoLoc();
                                     //get the data and return it
@@ -198,28 +198,17 @@ namespace tweetMaps_WPF
             }
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             WindowState = WindowState.Maximized;
             ResizeMode = ResizeMode.CanResizeWithGrip;
 
-            //Firstly we need the RequestToken and the AuthorisationUrl
-            requestToken = twitterService.GetRequestToken();
-            string authUrl = "https://api.twitter.com/oauth/authorize" + "?oauth_token=" + requestToken.Token;
 
-            Process.Start(authUrl); //Launches a browser that'll go to the AuthUrl.
+            var accessToken = Properties.Settings.Default.AccessToken;
+            var accessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
 
-            //pinTxtBox.Visibility = Visibility.Visible;
-            //submitPinBtn.Visibility = Visibility.Visible;
-            //getPinWindow.Visibility = Visibility.Visible;
-            var getPinWindow = new GetPinWindow();
-            getPinWindow.ShowDialog();
-            if (App.pin != 0)
+            if (accessToken != "" && accessTokenSecret != "" && App.IsAuthenticated)
             {
-                OAuthAccessToken accessToken = twitterService.GetAccessToken(requestToken, App.pin.ToString());
-
-                twitterService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-
                 GetUserProfileOptions options = new GetUserProfileOptions();
                 var profile = twitterService.GetUserProfile(options);
 
@@ -228,6 +217,29 @@ namespace tweetMaps_WPF
                 var timelineOptions = new ListTweetsOnHomeTimelineOptions();
                 timelineOptions.ExcludeReplies = true;
                 var tweets = twitterService.ListTweetsOnHomeTimeline(timelineOptions);
+
+                App.IsAuthenticated = true;
+            }
+            else
+            {
+                //Firstly we need the RequestToken and the AuthorisationUrl
+                requestToken = twitterService.GetRequestToken();
+                string authUrl = "https://api.twitter.com/oauth/authorize" + "?oauth_token=" + requestToken.Token;
+
+                Process.Start(authUrl); //Launches a browser that'll go to the AuthUrl.
+
+                var getPinWindow = new GetPinWindow();
+                getPinWindow.ShowDialog();
+
+                OAuthAccessToken newToken = twitterService.GetAccessToken(requestToken, App.pin.ToString());
+
+                // Save access token and secret locally
+                Properties.Settings.Default.AccessToken = newToken.Token;
+                Properties.Settings.Default.AccessTokenSecret = newToken.TokenSecret;
+                Properties.Settings.Default.Save();
+
+                twitterService.AuthenticateWith(newToken.Token, newToken.TokenSecret);
+                App.IsAuthenticated = true;
             }
 
             GetMyLocation();
@@ -239,7 +251,7 @@ namespace tweetMaps_WPF
         {
             if (e.Key == Key.Return)
             {
-                SearchForLocation(); 
+                SearchForLocation();
             }
         }
 
@@ -253,9 +265,16 @@ namespace tweetMaps_WPF
         {
             base.OnActivated(e);
 
+            var accessToken = Properties.Settings.Default.AccessToken;
+            var accessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
 
+            if (accessToken != "" && accessTokenSecret != "" && !App.IsAuthenticated)
+            {
+                twitterService.AuthenticateWith(accessToken, accessTokenSecret);
+                App.IsAuthenticated = true;
+            }
         }
 
- 
+
     }
 }

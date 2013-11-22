@@ -14,6 +14,23 @@ namespace tweetMaps_WPF
     /// </summary>
     public partial class App : Application
     {
-        public static int pin = 0; 
+        public static int pin = 0;
+        private readonly System.Configuration.ApplicationSettingsGroup settings;
+        public static bool IsAuthenticated = false; 
+
+        protected override void OnLoadCompleted(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            base.OnLoadCompleted(e);
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+
+            String usernameKey = "Username";
+            String passwordKey = "Password";
+            String User = "User"; 
+
+            base.OnStartup(e);
+        }
     }
 }
