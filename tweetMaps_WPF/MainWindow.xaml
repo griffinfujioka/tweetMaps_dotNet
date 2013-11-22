@@ -21,7 +21,7 @@
     <Controls:MetroWindow.WindowCommands>
     <Controls:WindowCommands>
         <Button Content="settings" />
-        <Button Content="sign in" />
+        <Button x:Name="signInBtn" Content="sign in" Click="signInBtn_Click" />
         </Controls:WindowCommands>
 </Controls:MetroWindow.WindowCommands>
     <Grid x:Name="LayoutRoot" Background="White">
@@ -37,6 +37,9 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        
+        
+        
 
         <m:Map x:Name="myMap" CredentialsProvider="Ao5Db3mOvlNH4G7lgK5WV0XWdm4mdVFZc7_vB8VajuR70hLR92egwnjiWpT67l0T" 
                Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" 

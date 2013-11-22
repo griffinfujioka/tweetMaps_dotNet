@@ -1,9 +1,11 @@
 ﻿using GoogleMaps.LocationServices;
+using Hammock.Authentication.OAuth;
 using MahApps.Metro.Controls;
 using Microsoft.Maps.MapControl.WPF;
 using Microsoft.Maps.MapControl.WPF.Design;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,6 +22,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using TweetSharp;
 
 namespace tweetMaps_WPF
 {
@@ -29,7 +32,9 @@ namespace tweetMaps_WPF
     public partial class MainWindow : MetroWindow
     {
          LocationConverter locConverter = new LocationConverter();
-         //Geolocator geolocator;
+         TwitterService twitterService;
+         OAuthRequestToken requestToken;
+
          Pushpin GpsPushpin;
 
         public MainWindow()
@@ -42,7 +47,17 @@ namespace tweetMaps_WPF
             // The default animation level: navigate between different map locations.
             //viewMap.AnimationLevel = AnimationLevel.Full;
 
+            TwitterClientInfo twitterClientInfo = new TwitterClientInfo();
+            twitterClientInfo.ConsumerKey = "ajToAV391Jb0GnqqHmvOA"; //Read ConsumerKey out of the app.config
+            twitterClientInfo.ConsumerSecret = "RlCpRFGVfQmZ6Dp4ziqYUZTUkySnyIKOxPDc4teatA"; //Read the ConsumerSecret out the app.config
+
+
+
+            twitterService = new TwitterService(twitterClientInfo);
+
             Loaded += OnLoaded;
+
+            
         }
 
         private void viewMap_ViewChangeOnFrame(object sender, MapEventArgs e)
@@ -187,6 +202,29 @@ namespace tweetMaps_WPF
         {
             WindowState = WindowState.Maximized;
             ResizeMode = ResizeMode.CanResizeWithGrip;
+
+            //Firstly we need the RequestToken and the AuthorisationUrl
+            requestToken = twitterService.GetRequestToken();
+            string authUrl = "https://api.twitter.com/oauth/authorize" + "?oauth_token=" + requestToken.Token;
+
+            Process.Start(authUrl); //Launches a browser that'll go to the AuthUrl.
+
+            //pinTxtBox.Visibility = Visibility.Visible;
+            //submitPinBtn.Visibility = Visibility.Visible;
+            //getPinWindow.Visibility = Visibility.Visible;
+            var getPinWindow = new GetPinWindow();
+            getPinWindow.ShowDialog();
+            if (App.pin != 0)
+            {
+                OAuthAccessToken accessToken = twitterService.GetAccessToken(requestToken, App.pin.ToString());
+
+                twitterService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+
+                GetUserProfileOptions options = new GetUserProfileOptions();
+                var profile = twitterService.GetUserProfile(options);
+
+                MessageBox.Show("Welcome to tweetMaps" + profile.Name);
+            }
             Loaded -= OnLoaded;
         }
 
@@ -197,5 +235,39 @@ namespace tweetMaps_WPF
                 SearchForLocation(); 
             }
         }
+
+        private void signInBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+
+
+        }
+
+        //private void submitPinBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var pin = pinTxtBox.Text;
+
+        //    OAuthAccessToken accessToken = twitterService.GetAccessToken(requestToken, pin);
+        //    pinTxtBox.Visibility = Visibility.Collapsed;
+        //    submitPinBtn.Visibility = Visibility.Collapsed;
+
+        //    twitterService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+
+        //    GetUserProfileOptions options = new GetUserProfileOptions();
+        //    var profile = twitterService.GetUserProfile(options);
+
+        //    MessageBox.Show("Welcome to tweetMaps" + profile.Name);
+
+        //    getPinWindow.Visibility = Visibility.Collapsed;
+            
+
+
+        //}
     }
 }
