@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace tweetMaps_WPF
 {
@@ -74,7 +75,7 @@ namespace tweetMaps_WPF
             }
             else if (((Button)sender).Name == "btnSearchForLocation")
             {
-                SearchForLocation(sender);
+                SearchForLocation();
                 return; 
             }
 
@@ -86,7 +87,7 @@ namespace tweetMaps_WPF
 
         }
 
-        private void SearchForLocation(object sender)
+        private void SearchForLocation()
         {
             var location = searchForLocationTxtBox.Text;
 
@@ -97,22 +98,77 @@ namespace tweetMaps_WPF
             var longitude = point.Longitude;
 
             Location center = new Location(latitude, longitude);
-            double zoom = 4;
+            double zoom = 10;
 
             myMap.SetView(center, zoom); 
         }
 
         private void GetMyLocation()
         {
-            
-
-            myMap.CredentialsProvider.GetCredentials((c) =>
+            try
             {
-                string sessionKey = c.ApplicationId;
+                //create a request to geoiptool.com
+                var request = WebRequest.Create(new Uri("http://geoiptool.com/data.php")) as HttpWebRequest;
 
-                //Generate a request URL for the Bing Maps REST services.
-                //Use the session key in the request as the Bing Maps key
-            });
+
+                if (request != null)
+                {
+                    //set the request user agent
+                    request.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727)";
+
+                    //get the response
+                    using (var webResponse = (request.GetResponse() as HttpWebResponse))
+                        if (webResponse != null)
+                            using (var reader = new StreamReader(webResponse.GetResponseStream()))
+                            {
+
+                                //get the XML document
+                                var doc = new XmlDocument();
+                                doc.Load(reader);
+
+                                //now we parse the XML document
+                                var nodes = doc.GetElementsByTagName("marker");
+
+                                //Guard.AssertCondition(nodes.Count > 0, "nodes", new object());
+                                //make sure we have nodes before looping
+                                if (nodes.Count > 0)
+                                {
+                                    //grab the first response
+                                    var marker = nodes[0] as XmlElement;
+
+                                    double err = 0; 
+
+                                    var latitude = Convert.ToDouble(marker.GetAttribute("lat"));
+
+                                    var longitude = Convert.ToDouble(marker.GetAttribute("lng")); 
+
+                                    Location center = new Location(latitude, longitude);
+                                    double zoom = 10;
+
+                                    myMap.SetView(center, zoom); 
+
+                                    //var _geoLoc = new GeoLoc();
+                                    //get the data and return it
+                                    //_geoLoc.City = marker.GetAttribute("city");
+                                    //_geoLoc.Country = marker.GetAttribute("country");
+                                    //_geoLoc.Code = marker.GetAttribute("code");
+                                    //_geoLoc.Host = marker.GetAttribute("host");
+                                    //_geoLoc.Ip = marker.GetAttribute("ip");
+                                    //_geoLoc.Latitude = marker.GetAttribute("lat");
+                                    //_geoLoc.Lognitude = marker.GetAttribute("lng");
+                                    //_geoLoc.State = GetMyState(_geoLoc.Latitude, _geoLoc.Lognitude);
+
+                                    //return _geoLoc;
+                                }
+                            }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
 
@@ -131,9 +187,15 @@ namespace tweetMaps_WPF
         {
             WindowState = WindowState.Maximized;
             ResizeMode = ResizeMode.CanResizeWithGrip;
-            //ShowMaxRestoreButton = false;
-            //ShowMinButton = false;
             Loaded -= OnLoaded;
+        }
+
+        private void searchForLocationTxtBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                SearchForLocation(); 
+            }
         }
     }
 }

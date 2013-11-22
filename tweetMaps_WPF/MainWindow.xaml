@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="tweetMaps WPF" Height="600" Width="1000">
+        Title="tweetMaps" Height="600" Width="1000">
     <Window.Resources>
         
         
@@ -21,7 +21,8 @@
     <Controls:MetroWindow.WindowCommands>
     <Controls:WindowCommands>
         <Button Content="settings" />
-    </Controls:WindowCommands>
+        <Button Content="sign in" />
+        </Controls:WindowCommands>
 </Controls:MetroWindow.WindowCommands>
     <Grid x:Name="LayoutRoot" Background="White">
 
@@ -37,20 +38,16 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,20,20,20">
-            <TextBlock Text="tweetMaps" FontFamily="Segoe WP Black" FontSize="36" />
-        </StackPanel>
-
         <m:Map x:Name="myMap" CredentialsProvider="Ao5Db3mOvlNH4G7lgK5WV0XWdm4mdVFZc7_vB8VajuR70hLR92egwnjiWpT67l0T" 
-               Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
+               Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" 
                Center="39.3683,-95.2734,0.0000" ZoomLevel="4.000" AnimationLevel="None" Mode="AerialWithLabels" Margin="40,60,40,60"/>
-        <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,10,20,10">
+        <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,10,20,10">
             <Button x:Name="btnCurrentLocation" Click="ChangeMapView_Click" Tag="39.3683,-95.2734,0.0000 4.0000"
                      Margin="5">
                 <TextBlock>Current location</TextBlock>
             </Button>
             
-            <TextBox x:Name="searchForLocationTxtBox" Margin="10, 10, 10, 10 " MinWidth="100">
+            <TextBox x:Name="searchForLocationTxtBox" Margin="10, 10, 10, 10 " MinWidth="100" KeyUp="searchForLocationTxtBox_KeyUp">
                 <TextBox.Style>
                     <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                         <Style.Resources>
