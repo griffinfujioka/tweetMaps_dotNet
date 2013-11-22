@@ -1,0 +1,76 @@
+﻿<Controls:MetroWindow x:Class="tweetMaps_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        Title="tweetMaps WPF" Height="600" Width="1000">
+    <Window.Resources>
+        
+        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Controls:MetroWindow.WindowCommands>
+    <Controls:WindowCommands>
+        <Button Content="settings" />
+    </Controls:WindowCommands>
+</Controls:MetroWindow.WindowCommands>
+    <Grid x:Name="LayoutRoot" Background="White">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,20,20,20">
+            <TextBlock Text="tweetMaps" FontFamily="Segoe WP Black" FontSize="36" />
+        </StackPanel>
+
+        <m:Map x:Name="myMap" CredentialsProvider="Ao5Db3mOvlNH4G7lgK5WV0XWdm4mdVFZc7_vB8VajuR70hLR92egwnjiWpT67l0T" 
+               Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
+               Center="39.3683,-95.2734,0.0000" ZoomLevel="4.000" AnimationLevel="None" Mode="AerialWithLabels" Margin="40,60,40,60"/>
+        <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Button x:Name="btnNorthAmerica" Click="ChangeMapView_Click" Tag="39.3683,-95.2734,0.0000 4.0000"
+                     Margin="5">
+                <TextBlock>North America</TextBlock>
+            </Button>
+            <Button x:Name="btnNewYork" Click="ChangeMapView_Click" Tag="40.7199,-74.0030,0.0000 12.0000" Margin="5">
+                <TextBlock>New York</TextBlock>
+            </Button>
+            <Button x:Name="btnSanFrancisco" Click="ChangeMapView_Click" Tag="37.6801,-122.3395,0.0000 11.0000" Margin="5">
+                <TextBlock>San Francisco</TextBlock>
+            </Button>
+            <Button x:Name="btnVancouver" Click="ChangeMapView_Click" Tag="49.2765,-123.1030,0.0000 14.0000" Margin="5">
+                <TextBlock>Vancouver</TextBlock>
+            </Button>
+            <ComboBox SelectionChanged="AnimationLevel_SelectionChanged" SelectedIndex="1" Margin="10" Height="20">
+                <ComboBoxItem Content="None" />
+                <ComboBoxItem Content="Full" />
+            </ComboBox>
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Opacity="0.9" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center">
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Opacity="0.9" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center">
+            <TextBlock Text="Latitude: " Padding="5" Foreground="White"/>
+            <TextBox x:Name="txtLatitude" Text="" IsReadOnly="True" Background="LightGray"/>
+            <TextBlock Text="Longitude: " Padding="5" Foreground="White" />
+            <TextBox x:Name="txtLongitude" Text="" IsReadOnly="True" Background="LightGray"/>
+        </StackPanel>
+    </Grid>
+</Controls:MetroWindow>

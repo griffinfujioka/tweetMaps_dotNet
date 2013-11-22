@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>BingMapsWpfControl</id>
+    <version>1.0.0</version>
+    <title>Bing Maps WPF Control</title>
+    <authors>Microsoft Corporation</authors>
+    <owners>Microsoft Corporation</owners>
+    <projectUrl>http://www.microsoft.com/download/en/details.aspx?id=27165</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This software development kit (SDK) provides the binaries and programming reference for the Bing Maps Windows Presentation Foundation Control. You can use this control to build your own applications that use Bing Maps with WPF or Surface.</description>
+    <summary>This software development kit (SDK) provides the binaries and programming reference for the Bing Maps Windows Presentation Foundation Control.</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+  </metadata>
+</package>
