@@ -5,8 +5,8 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         Title="tweetMaps" Height="600" Width="1000">
     <Window.Resources>
-        
-        
+
+
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
@@ -17,13 +17,13 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Controls:MetroWindow.WindowCommands>
-    <Controls:WindowCommands>
-        <Button Content="settings" />
-        <Button x:Name="signInBtn" Content="sign in" Click="signInBtn_Click" />
+        <Controls:WindowCommands>
+            <Button Content="settings" />
+            <Button x:Name="signInBtn" Content="sign in" Click="signInBtn_Click" />
         </Controls:WindowCommands>
-</Controls:MetroWindow.WindowCommands>
+    </Controls:MetroWindow.WindowCommands>
     <Grid x:Name="LayoutRoot" Background="White">
 
         <Grid.RowDefinitions>
@@ -37,9 +37,9 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        
-        
+
+
+
 
         <m:Map x:Name="myMap" CredentialsProvider="Ao5Db3mOvlNH4G7lgK5WV0XWdm4mdVFZc7_vB8VajuR70hLR92egwnjiWpT67l0T" 
                Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" 
@@ -49,7 +49,7 @@
                      Margin="5">
                 <TextBlock>Current location</TextBlock>
             </Button>
-            
+
             <TextBox x:Name="searchForLocationTxtBox" Margin="10, 10, 10, 10 " MinWidth="100" KeyUp="searchForLocationTxtBox_KeyUp">
                 <TextBox.Style>
                     <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -81,7 +81,7 @@
             </Button>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-            
+
             <Button x:Name="btnNorthAmerica" Click="ChangeMapView_Click" Tag="39.3683,-95.2734,0.0000 4.0000"
                      Margin="5">
                 <TextBlock>North America</TextBlock>
@@ -109,5 +109,31 @@
             <TextBlock Text="Longitude: " Padding="5" Foreground="White" />
             <TextBox x:Name="txtLongitude" Text="" IsReadOnly="True" Background="LightGray"/>
         </StackPanel>
+        
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Content="Home" Margin="20"/>
+            <Button Content="Connect" Margin="20"/>
+            <Button Content="Discover" Margin="20"/>
+            <Button Content="Me" Margin="20"/>
+        </StackPanel>
+        
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel x:Name="locationBasedTweetsStackPanel" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="10,10,10,10">
+                <TextBlock Text="Location based tweets"/>
+            </StackPanel>
+
+            <StackPanel x:Name="yourTimelineStackPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="10,10,10,10">
+                <TextBlock Text="Your Timeline"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Controls:MetroWindow>

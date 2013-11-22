@@ -198,7 +198,7 @@ namespace tweetMaps_WPF
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        private async void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             WindowState = WindowState.Maximized;
             ResizeMode = ResizeMode.CanResizeWithGrip;
@@ -223,8 +223,15 @@ namespace tweetMaps_WPF
                 GetUserProfileOptions options = new GetUserProfileOptions();
                 var profile = twitterService.GetUserProfile(options);
 
-                MessageBox.Show("Welcome to tweetMaps" + profile.Name);
+                MessageBox.Show("Welcome to tweetMaps " + profile.Name);
+
+                var timelineOptions = new ListTweetsOnHomeTimelineOptions();
+                timelineOptions.ExcludeReplies = true;
+                var tweets = twitterService.ListTweetsOnHomeTimeline(timelineOptions);
             }
+
+            GetMyLocation();
+
             Loaded -= OnLoaded;
         }
 
@@ -249,25 +256,6 @@ namespace tweetMaps_WPF
 
         }
 
-        //private void submitPinBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var pin = pinTxtBox.Text;
-
-        //    OAuthAccessToken accessToken = twitterService.GetAccessToken(requestToken, pin);
-        //    pinTxtBox.Visibility = Visibility.Collapsed;
-        //    submitPinBtn.Visibility = Visibility.Collapsed;
-
-        //    twitterService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-
-        //    GetUserProfileOptions options = new GetUserProfileOptions();
-        //    var profile = twitterService.GetUserProfile(options);
-
-        //    MessageBox.Show("Welcome to tweetMaps" + profile.Name);
-
-        //    getPinWindow.Visibility = Visibility.Collapsed;
-            
-
-
-        //}
+ 
     }
 }
