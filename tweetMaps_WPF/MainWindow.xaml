@@ -44,7 +44,44 @@
         <m:Map x:Name="myMap" CredentialsProvider="Ao5Db3mOvlNH4G7lgK5WV0XWdm4mdVFZc7_vB8VajuR70hLR92egwnjiWpT67l0T" 
                Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
                Center="39.3683,-95.2734,0.0000" ZoomLevel="4.000" AnimationLevel="None" Mode="AerialWithLabels" Margin="40,60,40,60"/>
+        <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,10,20,10">
+            <Button x:Name="btnCurrentLocation" Click="ChangeMapView_Click" Tag="39.3683,-95.2734,0.0000 4.0000"
+                     Margin="5">
+                <TextBlock>Current location</TextBlock>
+            </Button>
+            
+            <TextBox x:Name="searchForLocationTxtBox" Margin="10, 10, 10, 10 " MinWidth="100">
+                <TextBox.Style>
+                    <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Search for a location" Foreground="LightGray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseCaptured" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+
+            <Button x:Name="btnSearchForLocation" Click="ChangeMapView_Click" Tag="39.3683,-95.2734,0.0000 4.0000"
+                     Margin="5">
+                <TextBlock>Search</TextBlock>
+            </Button>
+        </StackPanel>
         <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            
             <Button x:Name="btnNorthAmerica" Click="ChangeMapView_Click" Tag="39.3683,-95.2734,0.0000 4.0000"
                      Margin="5">
                 <TextBlock>North America</TextBlock>
