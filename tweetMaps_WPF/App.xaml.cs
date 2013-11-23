@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using tweetMaps_WPF.Models;
 
 namespace tweetMaps_WPF
 {
@@ -16,7 +17,7 @@ namespace tweetMaps_WPF
     {
         public static int pin = 0;
         private readonly System.Configuration.ApplicationSettingsGroup settings;
-        public static bool IsAuthenticated = false; 
+        public static bool IsAuthenticated = false;
 
         protected override void OnLoadCompleted(System.Windows.Navigation.NavigationEventArgs e)
         {
@@ -25,10 +26,6 @@ namespace tweetMaps_WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
-
-            String usernameKey = "Username";
-            String passwordKey = "Password";
-            String User = "User"; 
 
             base.OnStartup(e);
         }

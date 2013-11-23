@@ -97,6 +97,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\CurrentLocation.cs" />
+    <Compile Include="Models\ReverseGeocodedLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

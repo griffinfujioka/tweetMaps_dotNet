@@ -98,13 +98,22 @@
             </ComboBox>
 
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Opacity="0.9" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center">
-            <TextBlock Text="Latitude: " Padding="5" Foreground="White" Height="40"/>
-            <TextBox x:Name="txtLatitude" Text="" IsReadOnly="True" Background="LightGray" Height="40"/>
-            <TextBlock Text="Longitude: " Padding="5" Foreground="White" Height="40" />
-            <TextBox x:Name="txtLongitude" Text="" IsReadOnly="True" Background="LightGray" Height="40"/>
-        </StackPanel>
+        
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,10">
+            <StackPanel Orientation="Horizontal" Opacity="0.9" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center">
+                <TextBlock Text="Latitude: " Padding="5" Foreground="White" Height="40"/>
+                <TextBox x:Name="txtLatitude" Text="" IsReadOnly="True" Background="LightGray" Height="30"/>
+                <TextBlock Text="Longitude: " Padding="5" Foreground="White" Height="40" />
+                <TextBox x:Name="txtLongitude" Text="" IsReadOnly="True" Background="LightGray" Height="30"/>
+            </StackPanel>
 
+            <StackPanel Orientation="Horizontal" Opacity="0.9" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center">
+                <TextBlock x:Name="cityTxtBlock" Text="" Padding="5" Foreground="#FF8CCCDE" Height="40" FontSize="20"/>
+            </StackPanel>
+
+        </StackPanel>
+        
+        
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button Content="Home" Margin="20"/>
             <Button Content="Connect" Margin="20"/>
