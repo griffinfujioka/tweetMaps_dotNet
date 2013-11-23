@@ -46,5 +46,29 @@ namespace tweetMaps_WPF.Properties {
                 this["AccessTokenSecret"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ajToAV391Jb0GnqqHmvOA")]
+        public string ConsumerKey {
+            get {
+                return ((string)(this["ConsumerKey"]));
+            }
+            set {
+                this["ConsumerKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RlCpRFGVfQmZ6Dp4ziqYUZTUkySnyIKOxPDc4teatA")]
+        public string ConsumerSecret {
+            get {
+                return ((string)(this["ConsumerSecret"]));
+            }
+            set {
+                this["ConsumerSecret"] = value;
+            }
+        }
     }
 }

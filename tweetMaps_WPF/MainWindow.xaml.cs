@@ -32,28 +32,65 @@ namespace tweetMaps_WPF
     public partial class MainWindow : MetroWindow
     {
         LocationConverter locConverter = new LocationConverter();
-        TwitterService twitterService;
         OAuthRequestToken requestToken;
+        string ConsumerKey = Properties.Settings.Default.ConsumerKey;
+        string ConsumerSecret = Properties.Settings.Default.ConsumerSecret;
+        TwitterService twitterService;
 
         Pushpin GpsPushpin;
 
         public MainWindow()
         {
             InitializeComponent();
+
             //Set focus on the map
             myMap.Focus();
+
             // Displays the current latitude and longitude as the map animates.
             myMap.ViewChangeOnFrame += new EventHandler<MapEventArgs>(viewMap_ViewChangeOnFrame);
-            // The default animation level: navigate between different map locations.
-            //viewMap.AnimationLevel = AnimationLevel.Full;
 
             TwitterClientInfo twitterClientInfo = new TwitterClientInfo();
-            twitterClientInfo.ConsumerKey = "ajToAV391Jb0GnqqHmvOA"; //Read ConsumerKey out of the app.config
-            twitterClientInfo.ConsumerSecret = "RlCpRFGVfQmZ6Dp4ziqYUZTUkySnyIKOxPDc4teatA"; //Read the ConsumerSecret out the app.config
+            twitterClientInfo.ConsumerKey = ConsumerKey;            //Read ConsumerKey from User Settings
+            twitterClientInfo.ConsumerSecret = ConsumerSecret;         //Read ConsumerSecret from User Settings
 
+            string AccessToken = Properties.Settings.Default.AccessToken;
+            string AccessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
 
 
             twitterService = new TwitterService(twitterClientInfo);
+
+            if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(AccessTokenSecret))
+            {
+                // We need to get an AccessToken and Secret
+                requestToken = twitterService.GetRequestToken();
+                string authUrl = "https://api.twitter.com/oauth/authorize" + "?oauth_token=" + requestToken.Token;
+
+                /****************************************/ 
+                /* Idea: Use a webview here instead     */ 
+                /****************************************/
+                Process.Start(authUrl); //Launches a browser that'll go to the AuthUrl.
+
+                var getPinWindow = new GetPinWindow();
+                getPinWindow.ShowDialog();
+
+                //getPinMenu.Visibility = Visibility.Visible;
+                var pin = App.pin;
+                OAuthAccessToken accessToken = twitterService.GetAccessToken(requestToken, App.pin.ToString());
+
+                // Save the AccessToken and AccessTokenSecret in User Settings
+                Properties.Settings.Default.AccessToken = accessToken.Token;
+                Properties.Settings.Default.AccessTokenSecret = accessToken.TokenSecret;
+                AccessToken = Properties.Settings.Default.AccessToken;
+                AccessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
+
+            }
+
+            twitterService.AuthenticateWith(AccessToken, AccessTokenSecret);
+
+            GetUserProfileOptions options = new GetUserProfileOptions();
+            var profile = twitterService.GetUserProfile(options);
+
+
 
             Loaded += OnLoaded;
 
@@ -64,6 +101,7 @@ namespace tweetMaps_WPF
         {
             // Gets the map object that raised this event.
             Map map = sender as Map;
+
             // Determine if we have a valid map object.
             if (map != null)
             {
@@ -151,7 +189,6 @@ namespace tweetMaps_WPF
                                     //grab the first response
                                     var marker = nodes[0] as XmlElement;
 
-                                    double err = 0;
 
                                     var latitude = Convert.ToDouble(marker.GetAttribute("lat"));
 
@@ -203,45 +240,6 @@ namespace tweetMaps_WPF
             WindowState = WindowState.Maximized;
             ResizeMode = ResizeMode.CanResizeWithGrip;
 
-
-            var accessToken = Properties.Settings.Default.AccessToken;
-            var accessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
-
-            if (accessToken != "" && accessTokenSecret != "" && App.IsAuthenticated)
-            {
-                GetUserProfileOptions options = new GetUserProfileOptions();
-                var profile = twitterService.GetUserProfile(options);
-
-                MessageBox.Show("Welcome to tweetMaps " + profile.Name);
-
-                var timelineOptions = new ListTweetsOnHomeTimelineOptions();
-                timelineOptions.ExcludeReplies = true;
-                var tweets = twitterService.ListTweetsOnHomeTimeline(timelineOptions);
-
-                App.IsAuthenticated = true;
-            }
-            else
-            {
-                //Firstly we need the RequestToken and the AuthorisationUrl
-                requestToken = twitterService.GetRequestToken();
-                string authUrl = "https://api.twitter.com/oauth/authorize" + "?oauth_token=" + requestToken.Token;
-
-                Process.Start(authUrl); //Launches a browser that'll go to the AuthUrl.
-
-                var getPinWindow = new GetPinWindow();
-                getPinWindow.ShowDialog();
-
-                OAuthAccessToken newToken = twitterService.GetAccessToken(requestToken, App.pin.ToString());
-
-                // Save access token and secret locally
-                Properties.Settings.Default.AccessToken = newToken.Token;
-                Properties.Settings.Default.AccessTokenSecret = newToken.TokenSecret;
-                Properties.Settings.Default.Save();
-
-                twitterService.AuthenticateWith(newToken.Token, newToken.TokenSecret);
-                App.IsAuthenticated = true;
-            }
-
             GetMyLocation();
 
             Loaded -= OnLoaded;
@@ -273,6 +271,11 @@ namespace tweetMaps_WPF
                 twitterService.AuthenticateWith(accessToken, accessTokenSecret);
                 App.IsAuthenticated = true;
             }
+        }
+
+        private void signOutBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
 
