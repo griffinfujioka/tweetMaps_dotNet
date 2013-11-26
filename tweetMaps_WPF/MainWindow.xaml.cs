@@ -27,6 +27,8 @@ using System.Windows.Shapes;
 using System.Xml;
 using tweetMaps_WPF.Models;
 using TweetSharp;
+using System.Drawing;
+
 
 namespace tweetMaps_WPF
 {
@@ -92,8 +94,39 @@ namespace tweetMaps_WPF
 
             twitterService.AuthenticateWith(AccessToken, AccessTokenSecret);
 
+            /************************************************/ 
+            /* Download and display the user's profile      */
+            /************************************************/ 
             GetUserProfileOptions options = new GetUserProfileOptions();
             var profile = twitterService.GetUserProfile(options);
+
+            var profileImageUrl = profile.ProfileImageUrl;
+
+            System.Drawing.Image profileImage;
+
+            // Download the user's profile image from the specified URL and bind it to the profilePicture control 
+            HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(profileImageUrl);
+
+            using (HttpWebResponse httpWebReponse = (HttpWebResponse)httpWebRequest.GetResponse())
+            {
+                using (Stream stream = httpWebReponse.GetResponseStream())
+                {
+                    profileImage = System.Drawing.Image.FromStream(stream);
+                }
+            }
+
+            profilePicture.Source = new BitmapImage(new Uri(profile.ProfileImageUrl));
+            usernameTxtBlock.Text = profile.Name;
+
+            tweetsTxtBlock.Text = profile.StatusesCount.ToString();
+            followersTxtBlock.Text = profile.FollowersCount.ToString();
+            followingTxtBlock.Text = profile.FriendsCount.ToString();
+
+
+
+            var tweets = twitterService.ListTweetsOnHomeTimeline(new ListTweetsOnHomeTimelineOptions()); 
+
+
 
 
 
@@ -233,7 +266,7 @@ namespace tweetMaps_WPF
                                 CurrentLocation.longitude = longitude;
                                 CurrentLocation.city = city;
 
-                                cityTxtBlock.Text = city;
+                                //cityTxtBlock.Text = city;
                             }
                         }
                 }
@@ -413,65 +446,65 @@ namespace tweetMaps_WPF
         {
             var location = new ReverseGeocodedLocation(); 
 
-            try
-            {
-                var url = "http://maps.google.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=false";
-                //create a request
-                var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
+            //try
+            //{
+            //    var url = "http://maps.google.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=false";
+            //    //create a request
+            //    var request = WebRequest.Create(new Uri(url)) as HttpWebRequest;
 
 
-                if (request != null)
-                {
-                    //set the request user agent
-                    request.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727)";
+            //    if (request != null)
+            //    {
+            //        //set the request user agent
+            //        request.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727)";
 
-                    var webResponse = await request.GetResponseAsync() as HttpWebResponse;
+            //        var webResponse = await request.GetResponseAsync() as HttpWebResponse;
 
-                    if (webResponse != null)
-                        using (var reader = new StreamReader(webResponse.GetResponseStream()))
-                        {
-                            var text = reader.ReadToEnd();
-                            var des = JsonConvert.DeserializeObject(text); 
-                            //get the XML document
-                            var doc = new XmlDocument();
-                            doc.Load(reader);
+            //        if (webResponse != null)
+            //            using (var reader = new StreamReader(webResponse.GetResponseStream()))
+            //            {
+            //                var text = reader.ReadToEnd();
+            //                var des = JsonConvert.DeserializeObject(text); 
+            //                //get the XML document
+            //                var doc = new XmlDocument();
+            //                doc.Load(reader);
 
-                            //now we parse the XML document
-                            var nodes = doc.GetElementsByTagName("GeocodeResponse");
+            //                //now we parse the XML document
+            //                var nodes = doc.GetElementsByTagName("GeocodeResponse");
 
-                            //Guard.AssertCondition(nodes.Count > 0, "nodes", new object());
-                            //make sure we have nodes before looping
-                            if (nodes.Count > 0)
-                            {
-                                //grab the first response
-                                var marker = nodes[0] as XmlElement;
+            //                //Guard.AssertCondition(nodes.Count > 0, "nodes", new object());
+            //                //make sure we have nodes before looping
+            //                if (nodes.Count > 0)
+            //                {
+            //                    //grab the first response
+            //                    var marker = nodes[0] as XmlElement;
 
-                                var name = marker.GetAttribute("long_name");
+            //                    var name = marker.GetAttribute("long_name");
 
-                                var newLatitude = Convert.ToDouble(marker.GetAttribute("lat"));
+            //                    var newLatitude = Convert.ToDouble(marker.GetAttribute("lat"));
 
-                                var newLongitude = Convert.ToDouble(marker.GetAttribute("lng"));
-                                var city = marker.GetAttribute("city").ToString();
+            //                    var newLongitude = Convert.ToDouble(marker.GetAttribute("lng"));
+            //                    var city = marker.GetAttribute("city").ToString();
 
-                                CurrentLocation.latitude = latitude;
-                                CurrentLocation.longitude = longitude;
-                                CurrentLocation.city = city;
+            //                    CurrentLocation.latitude = latitude;
+            //                    CurrentLocation.longitude = longitude;
+            //                    CurrentLocation.city = city;
 
-                                Location center = new Location(latitude, longitude);
-                                double zoom = 10;
+            //                    Location center = new Location(latitude, longitude);
+            //                    double zoom = 10;
 
-                                myMap.SetView(center, zoom);
-                            }
-                        }
-                }
+            //                    myMap.SetView(center, zoom);
+            //                }
+            //            }
+            //    }
          
 
 
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw;
+            //}
 
             return location;
         }
