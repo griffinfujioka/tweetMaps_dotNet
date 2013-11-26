@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="tweetMaps_WPF.User_Controls.Tweet"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="125" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        
+        <Image x:Name="authorImage" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" MaxWidth="60" MaxHeight="60"/>
+        
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0">
+            <TextBlock x:Name="displayNameTxtBlock" Text="Display name" Margin="10,10" FontWeight="Bold" FontSize="14"/>
+            <TextBlock x:Name="twitterHandleTxtBlock" Text="@twitter_handle" Margin="5,10" Foreground="#FF979797"/>
+        </StackPanel>
+        
+        <TextBlock x:Name="tweetContentTxtBlock" Grid.Row="1" Grid.Column="1" Margin="5,3" Text="lajfhelk asdflkjanej asdlkjfeklaj asdflkjasdjkjlk asdflj" TextWrapping="Wrap"/>
+            
+        <StackPanel x:Name="buttonsStackPanel">
+            
+        </StackPanel>
+    </Grid>
+</UserControl>

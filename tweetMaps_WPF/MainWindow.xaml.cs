@@ -126,6 +126,7 @@ namespace tweetMaps_WPF
 
             var tweets = twitterService.ListTweetsOnHomeTimeline(new ListTweetsOnHomeTimelineOptions()); 
 
+            
 
 
 
@@ -507,6 +508,20 @@ namespace tweetMaps_WPF
             //}
 
             return location;
+        }
+
+        private void submitNewTweetButton_Click(object sender, RoutedEventArgs e)
+        {
+            var tweetMsg = composeNewTweetTxtBox.Text;
+
+            var options = new SendTweetOptions();
+            options.Status = tweetMsg;
+            twitterService.AuthenticateWith(Properties.Settings.Default.AccessToken, Properties.Settings.Default.AccessTokenSecret);
+            TwitterStatus SendTweet = twitterService.SendTweet(new SendTweetOptions { Status = tweetMsg });
+            var responseText = twitterApp.Response.Response;
+
+            
+
         }
 
 

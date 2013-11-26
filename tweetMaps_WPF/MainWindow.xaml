@@ -26,9 +26,9 @@
 
     <Grid x:Name="LayoutRoot" Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="120"/>
             <RowDefinition Height="*" />
-            <RowDefinition Height="80" />
+            <RowDefinition Height="120" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -50,7 +50,7 @@
         </StackPanel>
 
 
-        <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Height="125">
+        <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Height="135" Margin="10,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height=".8*"/>
@@ -63,32 +63,53 @@
                     <TextBlock x:Name="usernameTxtBlock" Text="username"/>
                 </StackPanel>
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Left">
                 <StackPanel Orientation="Vertical" Margin="15,2">
-                    <TextBlock x:Name="tweetsTxtBlock"/>
-                    <TextBlock Text="tweets"/>
+                    <TextBlock x:Name="tweetsTxtBlock" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+                    <TextBlock Text="tweets" HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="15,2">
-                    <TextBlock x:Name="followingTxtBlock"/>
-                    <TextBlock Text="following"/>
+                    <TextBlock x:Name="followingTxtBlock" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+                    <TextBlock Text="following" HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="15,2">
-                    <TextBlock x:Name="followersTxtBlock"/>
-                    <TextBlock Text="followers"/>
+                    <TextBlock x:Name="followersTxtBlock" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center"/>
+                    <TextBlock Text="followers" HorizontalAlignment="Center"/>
                 </StackPanel>
 
             </StackPanel>
 
         </Grid>
 
+        <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Grid.RowSpan="2" MinHeight="100" MaxHeight="200" MinWidth="180" MaxWidth="240" Margin="10,30" VerticalAlignment="Top">
+            <StackPanel Orientation="Vertical">
+                <TextBox x:Name="composeNewTweetTxtBox" MinHeight="40" MaxHeight="140" MinWidth="160" MaxWidth="220" Text="Hello world" Margin="10,10" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFD7D8D8" SelectionOpacity="0.1" SpellCheck.IsEnabled="True" UndoLimit="139"/>
+
+                <Grid>
+                    <StackPanel x:Name="buttonsLeftStackPanel" Orientation="Horizontal">
+                        <Button Content="Camera" HorizontalAlignment="Left" MaxWidth="30"/>
+                        <Button Content="Location" HorizontalAlignment="Left" MaxWidth="30"/>
+                    </StackPanel>
+
+                    <StackPanel x:Name="buttonsRightStackPanel" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock x:Name="characterCountTxtBlock" HorizontalAlignment="Right" Text="140" VerticalAlignment="Center" Margin="8,1"/>
+                        <Button x:Name="submitNewTweetButton" Content="Submit" HorizontalAlignment="Right" Click="submitNewTweetButton_Click"/>
+                    </StackPanel>
+                </Grid>
+                
+            </StackPanel>
+        </Grid>
+
+
+
 
         <m:Map x:Name="myMap" CredentialsProvider="Ao5Db3mOvlNH4G7lgK5WV0XWdm4mdVFZc7_vB8VajuR70hLR92egwnjiWpT67l0T" 
                Grid.Column="0" Grid.Row="1" Grid.RowSpan="1" 
                Center="39.3683,-95.2734,0.0000" ZoomLevel="4.000" AnimationLevel="None" Mode="AerialWithLabels" Margin="40,60,40,60"/>
-        
+
         <StackPanel Orientation="Horizontal" Opacity="0.7" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 
             <Button x:Name="btnSeattle" Click="ChangeMapView_Click" Tag="47.6204,-122.3491,0.0000 16.0000"
@@ -161,7 +182,7 @@
                 <Button Content="Discover" Margin="20"/>
                 <Button Content="Me" Margin="20"/>
             </StackPanel>
-            
+
 
             <Grid Grid.Row="1" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -175,6 +196,14 @@
 
                 <StackPanel x:Name="locationBasedTweetsStackPanel" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="10,10,10,10">
                     <TextBlock Text="Location based tweets"/>
+                    <ListBox x:Name="locationBasedTweetsListBox" Margin="10,10" MinHeight="280">
+                        <ListBox>test</ListBox>
+                        <ListBox>test</ListBox>
+                        <ListBox>test</ListBox>
+                        <ListBox>test</ListBox>
+                        <ListBox>test</ListBox>
+                        <ListBox>test</ListBox>
+                    </ListBox>
                 </StackPanel>
 
                 <StackPanel x:Name="yourTimelineStackPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="10,10,10,10">
@@ -183,6 +212,6 @@
             </Grid>
         </StackPanel>
 
-        
+
     </Grid>
 </Controls:MetroWindow>

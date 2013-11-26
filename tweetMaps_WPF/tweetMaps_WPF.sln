@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tweetMaps_WPF", "tweetMaps_WPF.csproj", "{58C25FC9-84A5-43D0-A012-BDA0F30CD822}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tweetMaps.Common", "..\tweetMaps.Common\tweetMaps.Common.csproj", "{56A24FBB-0C12-4B30-A9D5-A71CA974009C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{58C25FC9-84A5-43D0-A012-BDA0F30CD822}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58C25FC9-84A5-43D0-A012-BDA0F30CD822}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58C25FC9-84A5-43D0-A012-BDA0F30CD822}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56A24FBB-0C12-4B30-A9D5-A71CA974009C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56A24FBB-0C12-4B30-A9D5-A71CA974009C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56A24FBB-0C12-4B30-A9D5-A71CA974009C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56A24FBB-0C12-4B30-A9D5-A71CA974009C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
