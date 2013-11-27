@@ -86,7 +86,7 @@
 
         <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Grid.RowSpan="2" MinHeight="100" MaxHeight="200" MinWidth="180" MaxWidth="240" Margin="10,30" VerticalAlignment="Top">
             <StackPanel Orientation="Vertical">
-                <TextBox x:Name="composeNewTweetTxtBox" MinHeight="40" MaxHeight="140" MinWidth="160" MaxWidth="220" Controls:TextboxHelper.Watermark="Compose new Tweet..." Margin="10,10" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFD7D8D8" SelectionOpacity="0.1" SpellCheck.IsEnabled="True" UndoLimit="139"/>
+                <TextBox x:Name="composeNewTweetTxtBox" MinHeight="40" MaxHeight="140" MinWidth="160" MaxWidth="220" Controls:TextboxHelper.Watermark="Compose new Tweet..." Margin="10,10" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFD7D8D8" SelectionOpacity="0.1" SpellCheck.IsEnabled="True" UndoLimit="139" KeyUp="composeNewTweetTxtBox_KeyUp"/>
 
                 <Grid>
                     <StackPanel x:Name="buttonsLeftStackPanel" Orientation="Horizontal">
@@ -98,6 +98,8 @@
                         <TextBlock x:Name="characterCountTxtBlock" HorizontalAlignment="Right" Text="140" VerticalAlignment="Center" Margin="8,1"/>
                         <Button x:Name="submitNewTweetButton" Content="Submit" HorizontalAlignment="Right" Click="submitNewTweetButton_Click"/>
                     </StackPanel>
+                    
+                    <TextBlock x:Name="tooManyCharactersTxtBlock" Text=""/>
                 </Grid>
                 
             </StackPanel>

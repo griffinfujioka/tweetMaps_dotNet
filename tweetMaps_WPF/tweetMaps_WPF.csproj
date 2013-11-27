@@ -40,6 +40,9 @@
     <Reference Include="Hammock.ClientProfile">
       <HintPath>packages\TweetSharp.2.3.1\lib\4.0\Hammock.ClientProfile.dll</HintPath>
     </Reference>
+    <Reference Include="LinqToTwitter">
+      <HintPath>packages\LinqToTwitter.2.1.11\lib\net45\LinqToTwitter.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>packages\MahApps.Metro.0.10.1.1\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>

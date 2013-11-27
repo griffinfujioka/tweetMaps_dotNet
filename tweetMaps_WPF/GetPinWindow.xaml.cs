@@ -28,7 +28,16 @@ namespace tweetMaps_WPF
 
         protected override void OnClosed(EventArgs e)
         {
-            App.pin = Convert.ToInt32(pinTxtBox.Text);
+            int err; 
+            
+            if (Int32.TryParse(pinTxtBox.Text, out err))
+            {
+                App.pin = Convert.ToInt32(pinTxtBox.Text);
+            }
+            else
+            {
+                App.pin = 0; 
+            }
             
            
             

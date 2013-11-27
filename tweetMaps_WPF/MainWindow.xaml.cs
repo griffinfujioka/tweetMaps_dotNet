@@ -28,6 +28,7 @@ using System.Xml;
 using tweetMaps_WPF.Models;
 using TweetSharp;
 using System.Drawing;
+using LinqToTwitter;
 
 
 namespace tweetMaps_WPF
@@ -137,8 +138,8 @@ namespace tweetMaps_WPF
             if (map != null)
             {
 
-                // Gets the center of the current map view for this particular frame.
-                Location mapCenter = map.Center;
+                // Gets the center of the current map view for this particular frame
+                Microsoft.Maps.MapControl.WPF.Location mapCenter = map.Center;
                 CurrentLocation.latitude = mapCenter.Latitude;
                 CurrentLocation.longitude = mapCenter.Longitude;
 
@@ -158,7 +159,7 @@ namespace tweetMaps_WPF
             {
 
                 // Gets the center of the current map view for this particular frame.
-                Location mapCenter = map.Center;
+                Microsoft.Maps.MapControl.WPF.Location mapCenter = map.Center;
 
                 // Updates the latitude and longitude values, in real time,
                 // as the map animates to the new location.
@@ -188,7 +189,7 @@ namespace tweetMaps_WPF
                 return;
             }
 
-            Location center = (Location)locConverter.ConvertFrom(tagInfo[0]);
+            Microsoft.Maps.MapControl.WPF.Location center = (Microsoft.Maps.MapControl.WPF.Location)locConverter.ConvertFrom(tagInfo[0]);
             double zoom = System.Convert.ToDouble(tagInfo[1]);
 
             // Set the map view
@@ -206,7 +207,7 @@ namespace tweetMaps_WPF
             var latitude = point.Latitude;
             var longitude = point.Longitude;
 
-            Location center = new Location(latitude, longitude);
+            Microsoft.Maps.MapControl.WPF.Location center = new Microsoft.Maps.MapControl.WPF.Location(latitude, longitude);
             double zoom = 10;
 
             myMap.SetView(center, zoom);
@@ -314,7 +315,7 @@ namespace tweetMaps_WPF
                                 CurrentLocation.longitude = longitude;
                                 CurrentLocation.city = city;
 
-                                Location center = new Location(latitude, longitude);
+                                Microsoft.Maps.MapControl.WPF.Location center = new Microsoft.Maps.MapControl.WPF.Location(latitude, longitude);
                                 double zoom = 10;
 
                                 myMap.SetView(center, zoom);
@@ -395,11 +396,6 @@ namespace tweetMaps_WPF
             ResizeMode = ResizeMode.CanResizeWithGrip;
 
             await GetMyLocation();
-
-            await Task.Run(() =>
-            {
-                twitterService.SendTweet(new SendTweetOptions { Status = "This is a test tweet..." });
-            });
 
             Loaded -= OnLoaded;
         }
@@ -504,21 +500,67 @@ namespace tweetMaps_WPF
             return location;
         }
 
-        private async void submitNewTweetButton_Click(object sender, RoutedEventArgs e)
+        private void submitNewTweetButton_Click(object sender, RoutedEventArgs e)
         {
             var tweetMsg = composeNewTweetTxtBox.Text;
+            var getPinWindow = new GetPinWindow();
 
-            var options = new SendTweetOptions();
-            options.Status = tweetMsg;
-            twitterService.AuthenticateWith(Properties.Settings.Default.AccessToken, Properties.Settings.Default.AccessTokenSecret);
 
-            await Task.Run(() =>
+            var authorizer = new PinAuthorizer
             {
-                twitterService.SendTweet(new SendTweetOptions { Status = tweetMsg });
-            });
-            var responseText = twitterService.Response.Response;
+                Credentials = new InMemoryCredentials
+                {
+                    ConsumerKey = Properties.Settings.Default.ConsumerKey,
+                    ConsumerSecret = Properties.Settings.Default.ConsumerSecret
+                },
 
-            
+                AuthAccessType = AuthAccessType.NoChange,
+                UseCompression = true,
+                GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+                GetPin = () =>
+                {
+                    getPinWindow.ShowDialog();
+
+                    return App.pin.ToString();
+                }
+
+
+            };
+
+            authorizer.Authorize();
+
+            if (authorizer.IsAuthorized)
+            {
+                using (var twitterCtx = new TwitterContext(authorizer))
+                {
+                    twitterCtx.Log = Console.Out;
+
+                    var tweet = twitterCtx.UpdateStatus(composeNewTweetTxtBox.Text);
+                }
+            }
+            else
+            {
+                // authorization failed
+            }
+        }
+
+        private void composeNewTweetTxtBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return && composeNewTweetTxtBox.Text.Length < 140)
+            {
+                submitNewTweetButton_Click(sender, (RoutedEventArgs)e);
+            }
+            else if (composeNewTweetTxtBox.Text.Length > 140)
+            {
+                characterCountTxtBlock.Text = (140 - composeNewTweetTxtBox.Text.Length).ToString();
+                submitNewTweetButton.IsEnabled = false;
+            }
+            else
+            {
+                characterCountTxtBlock.Text = composeNewTweetTxtBox.Text.Length + "/140";
+                submitNewTweetButton.IsEnabled = true;
+                
+            }
 
         }
 
