@@ -46,6 +46,10 @@ namespace tweetMaps_WPF
 
         public MainWindow()
         {
+            string AccessToken = Properties.Settings.Default.AccessToken;
+            string AccessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
+            var getPinWindow = new GetPinWindow(); 
+
             InitializeComponent();
 
             //Set focus on the map
@@ -56,66 +60,78 @@ namespace tweetMaps_WPF
 
             myMap.ViewChangeEnd += new EventHandler<MapEventArgs>(viewMap_ViewChangeEnd);
 
-
-            TwitterClientInfo twitterClientInfo = new TwitterClientInfo();
-            twitterClientInfo.ConsumerKey = ConsumerKey;            //Read ConsumerKey from User Settings
-            twitterClientInfo.ConsumerSecret = ConsumerSecret;         //Read ConsumerSecret from User Settings
-
-            string AccessToken = Properties.Settings.Default.AccessToken;
-            string AccessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
-
-
-            twitterService = new TwitterService(twitterClientInfo);
+            TwitterContext twitterContext;
 
             if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(AccessTokenSecret))
             {
-                // We need to get an AccessToken and Secret
-                requestToken = twitterService.GetRequestToken();
-                string authUrl = "https://api.twitter.com/oauth/authorize" + "?oauth_token=" + requestToken.Token;
+                var authorizer = new PinAuthorizer
+                {
+                    Credentials = new InMemoryCredentials
+                    {
+                        ConsumerKey = Properties.Settings.Default.ConsumerKey,
+                        ConsumerSecret = Properties.Settings.Default.ConsumerSecret
+                    },
 
-                /****************************************/
-                /* Idea: Use a webview here instead     */
-                /****************************************/
-                Process.Start(authUrl); //Launches a browser that'll go to the AuthUrl.
+                    AuthAccessType = AuthAccessType.NoChange,
+                    UseCompression = true,
+                    GoToTwitterAuthorization = pageLink => Process.Start(pageLink),
+                    GetPin = () =>
+                    {
+                        getPinWindow.ShowDialog();
 
-                var getPinWindow = new GetPinWindow();
-                getPinWindow.ShowDialog();
+                        return App.pin.ToString();
+                    }
 
-                //getPinMenu.Visibility = Visibility.Visible;
-                var pin = App.pin;
-                OAuthAccessToken accessToken = twitterService.GetAccessToken(requestToken, App.pin.ToString());
 
-                // Save the AccessToken and AccessTokenSecret in User Settings
-                Properties.Settings.Default.AccessToken = accessToken.Token;
-                Properties.Settings.Default.AccessTokenSecret = accessToken.TokenSecret;
-                AccessToken = Properties.Settings.Default.AccessToken;
-                AccessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
+                };
 
+                authorizer.Authorize();
+
+                twitterContext = new TwitterContext(authorizer);
+                
             }
-
-            twitterService.AuthenticateWith(AccessToken, AccessTokenSecret);
-        
-
-            /************************************************/ 
-            /* Download and display the user's profile      */
-            /************************************************/ 
-            GetUserProfileOptions options = new GetUserProfileOptions();
-            var profile = twitterService.GetUserProfile(options);
-
-            if (profile != null)
+            else
             {
-                profilePicture.Source = new BitmapImage(new Uri(profile.ProfileImageUrl));
-                usernameTxtBlock.Text = profile.Name;
+                var authorizer = new SingleUserAuthorizer
+                {
+                    Credentials = new SingleUserInMemoryCredentials
+                    {
+                        ConsumerKey = Properties.Settings.Default.ConsumerKey,
+                        ConsumerSecret = Properties.Settings.Default.ConsumerSecret,
+                        TwitterAccessToken = Properties.Settings.Default.AccessToken,
+                        TwitterAccessTokenSecret = Properties.Settings.Default.AccessTokenSecret
+                    },
 
-                tweetsTxtBlock.Text = profile.StatusesCount.ToString();
-                followersTxtBlock.Text = profile.FollowersCount.ToString();
-                followingTxtBlock.Text = profile.FriendsCount.ToString();
+                    AuthAccessType = AuthAccessType.NoChange,
+                    UseCompression = true
+
+
+                };
+
+                twitterContext = new TwitterContext(authorizer);
+
+                var users =
+                    from tweet in twitterContext.User
+                    where tweet.Type == UserType.Show &&
+                          tweet.ScreenName == "griffinfujioka"
+                    select tweet;
+
+                //var user = users.SingleOrDefault();
+
             }
 
+            //Account account = twitterContext.Account.Single(acct => acct.Type == AccountType.VerifyCredentials && acct.SkipStatus == true);
 
+            Account account = twitterContext.Account.SingleOrDefault(acct => acct.Type == AccountType.VerifyCredentials && acct.SkipStatus == true);
 
-            var tweets = twitterService.ListTweetsOnHomeTimeline(new ListTweetsOnHomeTimelineOptions()); 
+            User user = account.User;
 
+            profilePicture.Source = new BitmapImage(new Uri(user.ProfileImageUrl));
+            usernameTxtBlock.Text = user.Name;
+
+            tweetsTxtBlock.Text = user.StatusesCount.ToString();
+            followersTxtBlock.Text = user.FollowersCount.ToString();
+            followingTxtBlock.Text = user.FriendsCount.ToString();
             
 
 
@@ -397,6 +413,8 @@ namespace tweetMaps_WPF
 
             await GetMyLocation();
 
+            DownloadHomeTimeline();
+
             Loaded -= OnLoaded;
         }
 
@@ -417,15 +435,6 @@ namespace tweetMaps_WPF
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-
-            var accessToken = Properties.Settings.Default.AccessToken;
-            var accessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
-
-            if (accessToken != "" && accessTokenSecret != "" && !App.IsAuthenticated)
-            {
-                twitterService.AuthenticateWith(accessToken, accessTokenSecret);
-                App.IsAuthenticated = true;
-            }
         }
 
         private void signOutBtn_Click(object sender, RoutedEventArgs e)
@@ -562,6 +571,34 @@ namespace tweetMaps_WPF
                 
             }
 
+        }
+
+        private void DownloadHomeTimeline()
+        {
+            var authorizer = new SingleUserAuthorizer
+            {
+                Credentials = new SingleUserInMemoryCredentials
+                {
+                    ConsumerKey = Properties.Settings.Default.ConsumerKey,
+                    ConsumerSecret = Properties.Settings.Default.ConsumerSecret,
+                    TwitterAccessToken = Properties.Settings.Default.AccessToken,
+                    TwitterAccessTokenSecret = Properties.Settings.Default.AccessTokenSecret
+                },
+
+                AuthAccessType = AuthAccessType.NoChange,
+                UseCompression = true
+
+
+            };
+
+            var twitterContext = new TwitterContext(authorizer);
+
+            var tweets =
+                
+                (from tweet in twitterContext.Status
+                    where tweet.Type == StatusType.Home
+                    select tweet)
+                .ToList();
         }
 
 
