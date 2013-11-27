@@ -46,8 +46,8 @@ namespace tweetMaps_WPF
 
         public MainWindow()
         {
-            string AccessToken = Properties.Settings.Default.AccessToken;
-            string AccessTokenSecret = Properties.Settings.Default.AccessTokenSecret;
+            string AccessToken = null; //  Properties.Settings.Default.AccessToken;
+            string AccessTokenSecret = null; // Properties.Settings.Default.AccessTokenSecret;
             var getPinWindow = new GetPinWindow(); 
 
             InitializeComponent();
@@ -120,22 +120,17 @@ namespace tweetMaps_WPF
 
             }
 
-            //Account account = twitterContext.Account.Single(acct => acct.Type == AccountType.VerifyCredentials && acct.SkipStatus == true);
-
-            Account account = twitterContext.Account.SingleOrDefault(acct => acct.Type == AccountType.VerifyCredentials && acct.SkipStatus == true);
-
+            /********************************************************************************************/ 
+            /* Download the user's profile and display it in the top-right corner of the window         */
+            /********************************************************************************************/ 
+            Account account = twitterContext.Account.SingleOrDefault(acct => acct.Type == AccountType.VerifyCredentials && acct.SkipStatus == true); 
             User user = account.User;
-
             profilePicture.Source = new BitmapImage(new Uri(user.ProfileImageUrl));
             usernameTxtBlock.Text = user.Name;
 
             tweetsTxtBlock.Text = user.StatusesCount.ToString();
             followersTxtBlock.Text = user.FollowersCount.ToString();
             followingTxtBlock.Text = user.FriendsCount.ToString();
-            
-
-
-
 
             Loaded += OnLoaded;
 
@@ -413,7 +408,7 @@ namespace tweetMaps_WPF
 
             await GetMyLocation();
 
-            DownloadHomeTimeline();
+            //DownloadHomeTimeline();
 
             Loaded -= OnLoaded;
         }
