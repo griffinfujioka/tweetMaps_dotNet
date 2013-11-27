@@ -93,6 +93,7 @@ namespace tweetMaps_WPF
             }
 
             twitterService.AuthenticateWith(AccessToken, AccessTokenSecret);
+        
 
             /************************************************/ 
             /* Download and display the user's profile      */
@@ -100,27 +101,15 @@ namespace tweetMaps_WPF
             GetUserProfileOptions options = new GetUserProfileOptions();
             var profile = twitterService.GetUserProfile(options);
 
-            var profileImageUrl = profile.ProfileImageUrl;
-
-            System.Drawing.Image profileImage;
-
-            // Download the user's profile image from the specified URL and bind it to the profilePicture control 
-            HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(profileImageUrl);
-
-            using (HttpWebResponse httpWebReponse = (HttpWebResponse)httpWebRequest.GetResponse())
+            if (profile != null)
             {
-                using (Stream stream = httpWebReponse.GetResponseStream())
-                {
-                    profileImage = System.Drawing.Image.FromStream(stream);
-                }
+                profilePicture.Source = new BitmapImage(new Uri(profile.ProfileImageUrl));
+                usernameTxtBlock.Text = profile.Name;
+
+                tweetsTxtBlock.Text = profile.StatusesCount.ToString();
+                followersTxtBlock.Text = profile.FollowersCount.ToString();
+                followingTxtBlock.Text = profile.FriendsCount.ToString();
             }
-
-            profilePicture.Source = new BitmapImage(new Uri(profile.ProfileImageUrl));
-            usernameTxtBlock.Text = profile.Name;
-
-            tweetsTxtBlock.Text = profile.StatusesCount.ToString();
-            followersTxtBlock.Text = profile.FollowersCount.ToString();
-            followingTxtBlock.Text = profile.FriendsCount.ToString();
 
 
 
@@ -407,6 +396,11 @@ namespace tweetMaps_WPF
 
             await GetMyLocation();
 
+            await Task.Run(() =>
+            {
+                twitterService.SendTweet(new SendTweetOptions { Status = "This is a test tweet..." });
+            });
+
             Loaded -= OnLoaded;
         }
 
@@ -510,15 +504,19 @@ namespace tweetMaps_WPF
             return location;
         }
 
-        private void submitNewTweetButton_Click(object sender, RoutedEventArgs e)
+        private async void submitNewTweetButton_Click(object sender, RoutedEventArgs e)
         {
             var tweetMsg = composeNewTweetTxtBox.Text;
 
             var options = new SendTweetOptions();
             options.Status = tweetMsg;
             twitterService.AuthenticateWith(Properties.Settings.Default.AccessToken, Properties.Settings.Default.AccessTokenSecret);
-            TwitterStatus SendTweet = twitterService.SendTweet(new SendTweetOptions { Status = tweetMsg });
-            var responseText = twitterApp.Response.Response;
+
+            await Task.Run(() =>
+            {
+                twitterService.SendTweet(new SendTweetOptions { Status = tweetMsg });
+            });
+            var responseText = twitterService.Response.Response;
 
             
 
